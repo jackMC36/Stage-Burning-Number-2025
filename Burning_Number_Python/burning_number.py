@@ -1,4 +1,7 @@
 from typing import List, Tuple
+import networkx as nx
+import matplotlib.pyplot as plt
+
 import copy
 
 ##################################################################################################################################################################
@@ -57,6 +60,14 @@ class Graph:
     def __str__(self):
         return "Vertices: \n" + self.V.__str__() + "\n" + "Edges: \n" + self.E.__str__() + "\n"
     
+    def show(self):
+        '''Affiche le graphe avec networkx et matplotlib.'''
+        G = nx.Graph()
+        G.add_nodes_from(self.V)
+        G.add_edges_from(self.E)
+        pos = nx.spring_layout(G)
+        nx.draw(G, pos, with_labels=True, node_color='orange', edge_color='gray')
+        plt.show()
 
 
 ##################################################################################################################################################################
@@ -163,17 +174,11 @@ class Burning_Number:
             new_B_v[i] = B_vi_copy
 
         etat_intermediaire = Etat(new_NB,new_B,self.G.get_edges(),new_n,new_B_v,new_C)
-        print("Etat Intermediaire: \n")
-        print(etat_intermediaire.__str__())
-
         return etat_intermediaire
     
     def succ(self, etat: Etat, action: int) -> Etat:
         '''Retourne l'etat obtenu après avoir executé une action sur un état.'''
 
-       
-        print("Etat initial:\n")
-        print(etat.__str__())
 
         new_NB = etat.get_NB().copy()
         new_B = etat.get_B().copy()
@@ -189,8 +194,6 @@ class Burning_Number:
         new_B.add(action)
         new_NB.discard(action)
         new_etat = Etat(new_NB,new_B,self.G.get_edges(),new_n, new_B_v,new_C)
-        print("Etat Successeur:\n")
-        print(new_etat.__str__())
         return new_etat
         
         
@@ -304,23 +307,18 @@ class Noeud:
 
 ## Test ##
 
-
 G1 = Graph([], [])
 G1.txt_file_to_graph("Instances/karate.txt")
 B1 = Burning_Number(G1)
 L1 = B1.traiter()
 L2 = B1.noeuds_goal(L1)
-print("########################")
+print("########################\n")
+print("Il y a un total de " + len(L1).__str__() + " noeuds retenues")
+print("Avec un total de " + len(L2).__str__() + " noeuds goals")
+print("########################\n")
 
-print(L1[0].get_Etat().__str__())
+print("\n")
+print("Le meilleur noeud obtenu est:\n")
 print(L2[0].get_Etat().__str__())
 
-
-    
-    
-
-
-
-
-
-
+G1.show()
