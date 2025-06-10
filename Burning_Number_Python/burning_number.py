@@ -142,15 +142,13 @@ class Burning_Number:
     
     def propagation(self,etat: Etat) -> Etat:
         '''Retourne l'etat obtenu après avoir propagé le feu.'''
-        print("Etat initial:\n")
-        print(etat.__str__())
         new_NB = etat.get_NB().copy()
         new_B = etat.get_B().copy()
         new_n = etat.get_n()+1
         new_B_v = copy.deepcopy(etat.get_B_v())
         new_C = etat.get_C().copy()
         
-        for i in range(1,len(new_B_v)):
+        for i in range(0,len(new_B_v)):
             B_vi_copy = new_B_v[i].copy()
             for v in new_B_v[i]:
                 n = self.G.get_neigbhors(v)
@@ -177,17 +175,13 @@ class Burning_Number:
         print("Etat initial:\n")
         print(etat.__str__())
 
-        print("Etat Propagation\n")
-        intermediaire = self.propagation(etat)
-        print(intermediaire.__str__())
-
-        new_NB = intermediaire.get_NB().copy()
-        new_B = intermediaire.get_B().copy()
-        new_n = intermediaire.get_n()+1
-        new_B_v = copy.deepcopy(intermediaire.get_B_v())
-        new_C = intermediaire.get_C().copy()
+        new_NB = etat.get_NB().copy()
+        new_B = etat.get_B().copy()
+        new_n = etat.get_n()+1
+        new_B_v = copy.deepcopy(etat.get_B_v())
+        new_C = etat.get_C().copy()
         
-        if(action in intermediaire.get_B()):
+        if(action in etat.get_B()):
             raise ValueError
         
         new_B_v.insert(0,[action])
@@ -314,31 +308,12 @@ class Noeud:
 G1 = Graph([], [])
 G1.txt_file_to_graph("Instances/karate.txt")
 B1 = Burning_Number(G1)
-# L1 = B1.traiter()
-# L2 = B1.noeuds_goal(L1)
+L1 = B1.traiter()
+L2 = B1.noeuds_goal(L1)
+print("########################")
 
-print("################")
-E0 = B1.etat_initial()
-print(E0.__str__())
-
-print("################")
-E1 = B1.succ(E0,16)
-print(E1.__str__())
-
-print("################")
-E2 = B1.succ(E1,15)
-print(E2.__str__())
-
-print("################")
-E3 = B1.succ(E2,9)
-print(E3.__str__())
-
-print("################")
-print("################")
-print("################")
-print("################")
-
-# print(L2[0].get_Etat().__str__())
+print(L1[0].get_Etat().__str__())
+print(L2[0].get_Etat().__str__())
 
 
     
