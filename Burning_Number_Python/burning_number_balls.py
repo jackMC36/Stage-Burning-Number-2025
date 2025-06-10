@@ -68,6 +68,14 @@ class Graph:
         pos = nx.spring_layout(G)
         nx.draw(G, pos, with_labels=True, node_color='orange', edge_color='gray')
         plt.show()
+    
+    def score(self, sommet: int, degre: int, liste=[]):
+        if degre == 0:
+            return len(self.get_neigbhors(sommet))
+        else:
+            liste.append(sommet)
+            
+
 
 
 ##################################################################################################################################################################
@@ -245,7 +253,7 @@ class Burning_Number:
 ##################################################################################################################################################################
 ##################################################################################################################################################################
 ##################################################################################################################################################################
-##################################################################################################################################################################
+########################################################################################################toy_model_2##########################################################
 
 class Noeud:
     '''Noeud dans un arbre de recherche. Un noeud contient :
@@ -258,8 +266,6 @@ class Noeud:
     def __init__(self, Etat: Etat, parent=None, action=None, cout=0, n=0):
         self.Etat = Etat
         self.parent = parent
-        self.action = action
-        self.cout = cout
         self.depth = 0
         self.n = n
         if parent:
@@ -318,7 +324,8 @@ print("Avec un total de " + len(L2).__str__() + " noeuds goals")
 print("########################\n")
 
 print("\n")
-print("Le meilleur noeud obtenu est:\n")
-print(L2[0].get_Etat().__str__())
+print("Les meilleur noeud obtenu est:\n")
+for n in L2:
+    print(n.get_Etat().__str__())
 
 G1.show()
