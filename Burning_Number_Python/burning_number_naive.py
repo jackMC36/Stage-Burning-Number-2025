@@ -258,6 +258,7 @@ class Noeud:
     def __init__(self, Etat: Etat, parent=None, action=None, cout=0, n=0):
         self.Etat = Etat
         self.parent = parent
+        self.cout = 0
         self.depth = 0
         self.n = n
         if parent:
@@ -291,11 +292,6 @@ class Noeud:
             Noeud_enfant = Noeud(Etat_enfant,Courant,i,Courant.get_Cout()+1)
             L_Noeud.append(Noeud_enfant)
         return L_Noeud
-    
-
-
-
-
 
 
 ##################################################################################################################################################################
@@ -306,7 +302,7 @@ class Noeud:
 ## Test ##
 
 G1 = Graph([], [])
-G1.txt_file_to_graph("Instances/karate.txt")
+G1.txt_file_to_graph("Instances/toy_model.txt")
 B1 = Burning_Number(G1)
 L1 = B1.traiter()
 L2 = B1.noeuds_goal(L1)

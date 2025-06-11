@@ -1,7 +1,7 @@
 from typing import List, Tuple
 import networkx as nx
 import matplotlib.pyplot as plt
-
+import math
 import copy
 
 ##################################################################################################################################################################
@@ -69,12 +69,21 @@ class Graph:
         nx.draw(G, pos, with_labels=True, node_color='orange', edge_color='gray')
         plt.show()
     
-    def score(self, sommet: int, degre: int, liste=[]):
-        if degre == 0:
+    def score(self, sommet: int, n: int):
+        '''Correspond au score obtenu en plaçant une balle de taille degre sur le sommet en paramètre.'''
+        if n == 0:
             return len(self.get_neigbhors(sommet))
         else:
-            liste.append(sommet)
-            
+            N = self.get_neigbhors(sommet)
+            somme = 0
+            for v in N:
+                somme += self.score(v,n-1)
+            return somme/len(N)
+        
+    def borne(self):
+        '''Renvoie la borne supérieure du burning number.'''
+        return math.ceil(len(self.get_vertices())**0.5)
+
 
 
 
