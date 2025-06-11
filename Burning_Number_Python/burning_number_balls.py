@@ -20,6 +20,9 @@ class Graph:
         '''Le constructeur spécifie une liste de sommet V, et une liste d'aretes E.'''
         self.V = V
         self.E = E
+        self.G_nx = nx.Graph()
+        self.G_nx.add_nodes_from(self.V)
+        self.G_nx.add_edges_from(self.E)
 
     def get_vertices(self) -> List[int]:
         return self.V
@@ -56,17 +59,18 @@ class Graph:
                     E.add((neighbor, node))
         self.V = list(sorted(V))
         self.E = list(E)
+        G_nx = nx.Graph()
+        G_nx.add_nodes_from(self.V)
+        G_nx.add_edges_from(self.E)
+        self.G_nx = G_nx
 
     def __str__(self):
         return "Vertices: \n" + self.V.__str__() + "\n" + "Edges: \n" + self.E.__str__() + "\n"
     
     def show(self):
         '''Affiche le graphe avec networkx et matplotlib.'''
-        G = nx.Graph()
-        G.add_nodes_from(self.V)
-        G.add_edges_from(self.E)
-        pos = nx.spring_layout(G)
-        nx.draw(G, pos, with_labels=True, node_color='orange', edge_color='gray')
+        pos = nx.spring_layout(self.G_nx)
+        nx.draw(self.G_nx, pos, with_labels=True, node_color='orange', edge_color='gray')
         plt.show()
     
     def score(self, sommet: int, n: int):
@@ -80,9 +84,19 @@ class Graph:
                 somme += self.score(v,n-1)
             return somme/len(N)
         
+    def diametre(self):
+        '''Calcule le diametre du Graph.'''
+        len_max = 0
+        for i in self.V:
+            for j in self.V:
+                if nx.shortest_path_length(self.G_nx, i, j) > len_max:
+                    len_max = nx.shortest_path_length(self.G_nx, i, j)
+        return len_max
+
+        
     def borne(self):
         '''Renvoie la borne supérieure du burning number.'''
-        return math.ceil(len(self.get_vertices())**0.5)
+        return max(math.ceil(len(self.get_vertices())**0.5),self.diametre())
 
 
 
