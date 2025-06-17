@@ -1,0 +1,366 @@
+\documentclass[11pt,a4paper]{article}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{xcolor} 
+\usepackage[most]{tcolorbox}
+\usepackage{float} 
+
+\title{Pseudo-code}
+\author{J. KOZIK}
+\date{\today}
+
+\algrenewcommand\algorithmicif{\textbf{Si}}
+\algrenewcommand\algorithmicthen{\textbf{alors}}
+\algrenewcommand\algorithmicelse{\textbf{Sinon}}
+\algrenewcommand\algorithmicend{\textbf{Fin}}
+\algrenewcommand\algorithmicdo{\textbf{Faire}}
+\algrenewcommand\algorithmicwhile{\textbf{Tant que}}
+\algrenewcommand\algorithmicfor{\textbf{Pour}}
+\algrenewcommand\algorithmicreturn{\textbf{Retourner}}
+\algrenewcommand\algorithmicfunction{\textbf{Fonction}}
+\algrenewcommand\algorithmicprocedure{\textbf{Procédure}}
+\algrenewcommand\algorithmicrepeat{\textbf{Répéter}}
+\algrenewcommand\algorithmicuntil{\textbf{Jusqu'à}}
+
+\definecolor{procedurecolor}{rgb}{0,0,1}
+\definecolor{structurecolor}{rgb}{0,0,0.5} 
+
+\begin{document}
+
+\begin{tcolorbox}[title=Structure de la classe Graph,colback=blue!10!white,colframe=blue!95!black]
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+    \State \textbf{Classe} Graph
+    \State \textbf{Attributs} :
+    \State \hspace{1em} V : liste des sommets
+    \State \hspace{1em} E : liste des arêtes (paires de sommets)
+    \State \hspace{1em} G\_nx : graphe networkx (pour l'affichage)
+    
+    	\\
+    	\\
+
+
+    \Function{get\_neighbors}{v}
+        \State l $\gets$ ensemble vide
+        \For{chaque e dans E}
+            \If{v = e[0]} \State Ajouter e[1] à l \EndIf
+            \If{v = e[1]} \State Ajouter e[0] à l \EndIf
+        \EndFor
+        \State \Return l
+    \EndFunction
+    \\
+
+    \Function{get\_neighbors\_distant}{v, distance}
+        \State l $\gets$ \{v\}
+        \If{distance $\leq$ 0}
+            \State \Return l
+        \EndIf
+        \State temp $\gets$ get\_neighbors(v)
+        \State l $\gets$ l $\cup$ temp
+        \For{chaque vertice dans temp}
+            \State l $\gets$ l $\cup$ get\_neighbors\_distant(vertice, distance-1)
+        \EndFor
+        \State \Return l
+    \EndFunction
+    \\
+
+    \Function{diametre}{}
+        \State len\_max $\gets$ 0
+        \For{chaque i dans V}
+            \For{chaque j dans V}
+                \State d $\gets$ longueur du plus court chemin entre i et j
+                \If{d $>$ len\_max}
+                    \State len\_max $\gets$ d
+                \EndIf
+            \EndFor
+        \EndFor
+        \State \Return len\_max
+    \EndFunction
+    \\
+
+    \Function{borne}{}
+        \State \Return min(ceil($\sqrt{|V|}$), diametre())
+    \EndFunction
+
+\end{algorithmic}
+\end{algorithm}
+\end{tcolorbox}
+
+\newpage
+
+\begin{tcolorbox}[title=Structure de la classe Etat,colback=red!10!white,colframe=red!95!black]
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+    \State \textbf{Classe} Etat
+    \State \textbf{Attributs} :
+    \State \hspace{1em} B : ensemble des sommets brûlés
+    \State \hspace{1em} NB : ensemble des sommets non brûlés
+    \State \hspace{1em} G : graphe associé
+    \State \hspace{1em} n : numéro de la séquence (étape courante)
+    \State \hspace{1em} B\_v : liste des sommets brûlés par chaque balle
+    \State \hspace{1em} C : liste des centres des balles
+    \State \hspace{1em} id : identifiant unique
+    \State \hspace{1em} score : score de l'état
+
+    \\
+
+    \Procedure{init}{NB, B, G, n, B\_v, C}
+        \State self.B $\gets$ copie de B
+        \State self.NB $\gets$ copie de NB
+        \State self.G $\gets$ G
+        \State self.n $\gets$ n
+        \State self.B\_v $\gets$ B\_v
+        \State self.C $\gets$ C
+        \State self.id $\gets$ nouvel identifiant unique
+        \State score $\gets$ 0
+        \For{chaque $i$ dans $[0, |B\_v|)$}
+            \State score $\gets$ score $+$ \Call{score\_sommet}{self.C[i], i}
+        \EndFor
+        \State self.score $\gets$ score $-$ \Call{diametre\_NB}{\,}$^2$
+    \EndProcedure
+
+    \\
+    \\
+
+    \Function{score\_sommet}{sommet, n}
+        \If{n = 0}
+            \State \Return 1
+
+        \Else
+            \State \Return $\frac{|\text{voisins à distance } n|}{n^2}$
+        \EndIf
+    \EndFunction
+
+    \\
+
+    \Function{diametre\_NB}{}
+        \State len\_max $\gets$ 0
+        \For{chaque $i$ dans NB}
+            \For{chaque $j$ dans NB}
+                \State d $\gets$ longueur du plus court chemin entre $i$ et $j$ dans $G$
+                \If{d $>$ len\_max}
+                    \State len\_max $\gets$ d
+                \EndIf
+            \EndFor
+        \EndFor
+        \State \Return len\_max
+    \EndFunction
+
+
+
+\end{algorithmic}
+\end{algorithm}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[title=Structure de la classe Burning\_Number,colback=green!10!white,colframe=green!95!black]
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+    \State \textbf{Classe} Burning\_Number
+    \State \textbf{Attributs} :
+    \State \hspace{1em} G : le graphe associé
+    \State \hspace{1em} Etat : l'état courant
+
+    \\
+
+    \Procedure{init}{G}
+        \State self.G $\gets$ G
+        \State self.Etat $\gets$ nouvel Etat initial (tous sommets non brûlés)
+    \EndProcedure
+
+    \\
+    \\
+
+    \Function{etat\_initial}{}
+        \State \Return nouvel Etat initial (tous sommets non brûlés)
+    \EndFunction
+
+    \\
+
+    \Function{actions}{etat}
+        \State \Return ensemble des sommets non brûlés dans etat
+    \EndFunction
+
+    \\
+
+    \Function{propagation}{etat}
+        \State Créer copies de NB, B, B\_v, C depuis etat
+        \State Incrémenter n
+        \For{chaque balle $i$ dans B\_v}
+            \For{chaque sommet $v$ brûlé par la balle $i$}
+                \For{chaque voisin $l$ de $v$}
+                    \If{$l$ n'est pas déjà brûlé par la balle $i$}
+                        \State Marquer $l$ comme brûlé
+                        \State Retirer $l$ de NB
+                        \State Ajouter $l$ à B
+                        \State Ajouter $l$ à la balle $i$
+                    \EndIf
+                \EndFor
+            \EndFor
+        \EndFor
+        \State \Return nouvel Etat avec NB, B, B\_v, C, n
+    \EndFunction
+    
+    \\
+
+    \Function{succ}{etat, action}
+        \State Créer copies de NB, B, B\_v, C depuis etat
+        \State Incrémenter n
+        \If{action déjà brûlé}
+            \State Erreur
+        \EndIf
+        \State Ajouter une nouvelle balle centrée sur action
+        \State Mettre à jour B, NB, B\_v, C
+        \State \Return nouvel Etat
+    \EndFunction
+
+    \\
+
+    \Function{goal\_test}{etat}
+        \State \Return Vrai si NB est vide, Faux sinon
+    \EndFunction
+
+\end{algorithmic}
+\end{algorithm}
+
+\end{tcolorbox}
+
+\newpage
+
+\begin{tcolorbox}[colback=green!10!white,colframe=green!95!black]
+
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+
+    \Function{traiter}{}
+        \State niveau $\gets$ borne du graphe divisé par 2
+        \State etat\_initial $\gets$ etat\_initial()
+        \State noeud\_initial $\gets$ Noeud(etat\_initial)
+        \State L\_Noeud $\gets$ [noeud\_initial]
+        \State L\_a\_traiter $\gets$ [noeud\_initial]
+        \While{L\_a\_traiter non vide}
+            \State Courant $\gets$ premier de L\_a\_traiter
+            \State Générer les enfants de Courant (propagation puis actions)
+            \State Trier les enfants par score
+            \State Ajouter la moitié supérieure à L\_a\_traiter et L\_Noeud
+            \If{un enfant est but}
+                \State Vider L\_a\_traiter
+            \EndIf
+        \EndWhile
+        \State \Return L\_Noeud
+    \EndFunction
+
+    \\
+
+    \Function{noeuds\_goal}{L\_noeud}
+        \State L\_goal\_noeud $\gets$ []
+        \For{chaque n dans L\_noeud}
+            \If{goal\_test(n.etat)}
+                \State Ajouter n à L\_goal\_noeud
+            \EndIf
+        \EndFor
+        \State Trier L\_goal\_noeud par score décroissant
+        \State \Return L\_goal\_noeud
+    \EndFunction
+
+    \\
+    
+\end{algorithmic}
+\end{algorithm}
+
+\end{tcolorbox}
+
+\begin{tcolorbox}[title=Structure de la classe Noeud,colback=yellow!10!white,colframe=yellow!95!black]
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+    \State \textbf{Classe} Noeud
+    \State \textbf{Attributs} :
+    \State \hspace{1em} Etat : l'état associé au noeud
+    \State \hspace{1em} parent : pointeur vers le noeud parent
+    \State \hspace{1em} action : action menant à cet état
+    \State \hspace{1em} cout : coût pour atteindre ce noeud
+    \State \hspace{1em} n : numéro du coup
+    \State \hspace{1em} depth : profondeur dans l'arbre
+
+    \\
+
+    \Procedure{init}{Etat, parent, action, cout, n}
+        \State self.Etat $\gets$ Etat
+        \State self.parent $\gets$ parent
+        \State self.action $\gets$ action
+        \State self.cout $\gets$ cout
+        \State self.n $\gets$ n
+        \State self.depth $\gets$ 0
+        \If{parent existe}
+            \State self.depth $\gets$ parent.depth $+$ 1
+        \EndIf
+    \EndProcedure
+
+    \\
+    \\
+
+    \Function{child\_Noeud}{problem, action}
+        \State \Return problem.succ(self.Etat, action)
+    \EndFunction
+
+    \\
+
+    \Function{expand}{problem, niveau}
+        \State L\_Noeud $\gets$ liste vide
+        \State Courant $\gets$ self
+        \State Etat\_Intermediaire $\gets$ problem.propagation(Courant.Etat)
+        \State L\_actions $\gets$ problem.actions(Etat\_Intermediaire)
+        \For{chaque $i$ dans L\_actions}
+            \State Etat\_enfant $\gets$ problem.succ(Etat\_Intermediaire, i)
+            \State Noeud\_enfant $\gets$ Noeud(Etat\_enfant, Courant, i, Courant.cout $+$ 1)
+            \State Ajouter Noeud\_enfant à L\_Noeud
+        \EndFor
+        \State Trier L\_Noeud par score croissant
+        \State \Return moitié supérieure de L\_Noeud
+    \EndFunction
+
+    \\
+
+\end{algorithmic}
+\end{algorithm}
+\end{tcolorbox}
+
+\begin{tcolorbox}[title=Programme principal,colback=gray!10!white,colframe=gray!95!black]
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+
+    \State G1 $\gets$ nouveau Graph vide
+    \State \texttt{"Instances/graphe.txt"} dans G1
+    \State B1 $\gets$ nouvel objet Burning\_Number(G1)
+    \State L1 $\gets$ B1.traiter()
+    \State L2 $\gets$ B1.noeuds\_goal(L1)
+    \State taille\_balle\_min $\gets$ taille minimale des listes C dans L2
+	\\
+
+    \State Afficher le nombre total de noeuds retenus (taille de L1)
+    \State Afficher le(s) noeud(s) de $b(G)$ minimal :
+    
+    \\
+    \For{chaque l dans L2}
+        \If{taille de $l.get\_Etat().get\_C() - 1 = $ taille\_balle\_min}
+            \State Afficher l'état correspondant
+        \EndIf
+    \EndFor
+
+    \State Afficher le graphe G1
+
+\end{algorithmic}
+\end{algorithm}
+\end{tcolorbox}
+
+
+\end{document}
